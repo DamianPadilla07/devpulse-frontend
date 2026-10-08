@@ -1,0 +1,186 @@
+<div class="app-layout">
+  <!-- MENÚ LATERAL (Sidebar Dark) -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">☑</div>
+      <span class="brand-title">TaskManager</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item active"><span class="icon">🏠</span> Dashboard</a>
+      <a class="nav-item"><span class="icon">📋</span> Mis Tareas</a>
+      <a class="nav-item"><span class="icon">📅</span> Calendario</a>
+      <a class="nav-item"><span class="icon">⚙️</span> Configuración</a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="avatar">{{ usuarioActual?.username?.substring(0,2)?.toUpperCase() || 'US' }}</div>
+      <div class="user-details">
+        <span class="user-name">Usuario</span>
+        <span class="user-handle">{{ usuarioActual?.username }}</span>
+      </div>
+      <button class="btn-logout" type="button" (click)="logout()" title="Cerrar Sesión">➔</button>
+    </div>
+  </aside>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+    <!-- Topbar con Buscador y Perfil -->
+    <header class="topbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Buscar tareas..." />
+      </div>
+
+      <div class="topbar-actions">
+        <button class="btn-icon">🔔</button>
+        <div class="user-badge">
+          <div class="avatar-sm">AE</div>
+          <span>{{ usuarioActual?.username }}</span>
+          <span class="arrow">⌄</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-body">
+      <!-- Tarjetas de Métricas (Claras) -->
+      <section class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon blue">📋</div>
+          <div class="metric-info">
+            <span class="count">{{ totalTickets }}</span>
+            <span class="label">Total de Tareas</span>
+          </div>
+        </div>
+
+        <div class="metric-card yellow">
+          <div class="metric-icon yellow">🕒</div>
+          <div class="metric-info">
+            <span class="count">{{ pendientes }}</span>
+            <span class="label">Pendientes</span>
+          </div>
+        </div>
+
+        <div class="metric-card purple">
+          <div class="metric-icon purple">☑</div>
+          <div class="metric-info">
+            <span class="count">{{ enProgreso }}</span>
+            <span class="label">En Progreso</span>
+          </div>
+        </div>
+
+        <div class="metric-card green">
+          <div class="metric-icon green">✔️</div>
+          <div class="metric-info">
+            <span class="count">{{ completadas }}</span>
+            <span class="label">Completadas</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Banner de IA (DevPulse AI Assistant) -->
+      <section class="ai-assistant-banner">
+        <div class="ai-info">
+          <div class="ai-sparkle">✨</div>
+          <div>
+            <h3>DevPulse AI Assistant</h3>
+            <p>Tu asistente inteligente para gestionar y optimizar tus tareas.</p>
+          </div>
+        </div>
+        <button class="btn-ai-action" type="button" (click)="analizarConIa()" [disabled]="cargandoIa">
+          ✨ {{ cargandoIa ? 'Analizando...' : 'Analizar Sprint con IA' }}
+        </button>
+      </section>
+
+      <div *ngIf="analisisIa" class="ai-response-box">
+        <p>🤖 {{ analisisIa }}</p>
+      </div>
+
+      <!-- Layout de 2 Columnas (Formulario + Lista) -->
+      <div class="content-grid">
+        <!-- Formulario Crear/Editar -->
+        <section class="card-box form-card">
+          <div class="card-header">
+            <h4><span class="blue-plus">+</span> {{ editando ? 'Editar Ticket' : 'Nuevo Ticket de Sprint' }}</h4>
+          </div>
+
+          <form (ngSubmit)="guardarTarea()">
+            <div class="form-group">
+              <label>Título del Ticket</label>
+              <input type="text" [(ngModel)]="nuevaTarea.titulo" name="titulo" autocomplete="off" required placeholder="Ej: Corregir vulnerabilidad en Login" />
+            </div>
+
+            <div class="form-group">
+              <label>Descripción Técnica</label>
+              <textarea [(ngModel)]="nuevaTarea.descripcion" name="descripcion" rows="3" placeholder="Detalles de la incidencia..."></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Estado</label>
+                <select [(ngModel)]="nuevaTarea.estado" name="estado">
+                  <option value="PENDIENTE">PENDIENTE</option>
+                  <option value="EN_PROGRESO">EN PROGRESO</option>
+                  <option value="COMPLETADA">COMPLETADA</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Prioridad</label>
+                <select [(ngModel)]="nuevaTarea.prioridad" name="prioridad">
+                  <option value="BAJA">BAJA</option>
+                  <option value="MEDIA">MEDIA</option>
+                  <option value="ALTA">ALTA</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-submit">
+                <span>⚡</span> {{ editando ? 'Actualizar Ticket' : 'Crear Ticket' }}
+              </button>
+              <button type="button" *ngIf="editando" class="btn-cancel" (click)="resetForm()">Cancelar</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Lista de Tareas / Tickets -->
+        <section class="card-box list-card">
+          <div class="card-header">
+            <h4>Sprint Backlog / Tablero</h4>
+          </div>
+
+          <div *ngIf="tareas.length === 0" class="empty-msg">No hay tickets registrados aún.</div>
+
+          <div class="ticket-list">
+            <div *ngFor="let task of tareas" class="ticket-item" [ngClass]="{'border-red': esCuelloDeBotella(task)}">
+              <div class="ticket-content">
+                <div class="ticket-top">
+                  <h5 class="ticket-title">{{ task.titulo }}</h5>
+                  <div class="ticket-badges">
+                    <span class="badge priority-badge" [ngClass]="task.prioridad.toLowerCase()">
+                      ❗ {{ task.prioridad === 'ALTA' ? 'Alto' : task.prioridad === 'MEDIA' ? 'Media' : 'Baja' }}
+                    </span>
+                    <span *ngIf="esCuelloDeBotella(task)" class="badge risk-badge">
+                      ⚠️ Riesgo Botella
+                    </span>
+                  </div>
+                </div>
+
+                <p class="ticket-desc">{{ task.descripcion }}</p>
+
+                <div class="ticket-bottom">
+                  <span class="status-pill" [ngClass]="task.estado.toLowerCase()">{{ task.estado }}</span>
+                  <div class="ticket-actions">
+                    <button class="action-btn" type="button" (click)="editarTarea(task)">✏️</button>
+                    <button class="action-btn" type="button" (click)="eliminarTarea(task.id)">🗑️</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>

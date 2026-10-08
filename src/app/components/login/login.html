@@ -1,0 +1,78 @@
+<div class="login-page" style="background-image: url('assets/bg.jpeg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+  <div class="bg-overlay"></div>
+
+  <div class="glass-card">
+    <div class="card-header">
+      <div class="brand-icon">⚡</div>
+      <h2>DevPulse AI</h2>
+      <p class="card-sub">{{ esLogin ? 'Inicia sesión para gestionar tus sprints' : 'Regístrate para comenzar a organizar tus proyectos' }}</p>
+    </div>
+
+    <!-- Mensajes de Alerta -->
+    <div *ngIf="mensajeError" class="alert alert-danger">{{ mensajeError }}</div>
+    <div *ngIf="mensajeExito" class="alert alert-success">{{ mensajeExito }}</div>
+
+    <!-- Formulario LOGIN -->
+    <form *ngIf="esLogin" (ngSubmit)="onLogin()">
+      <div class="input-group">
+        <label>Usuario</label>
+        <div class="input-wrapper">
+          <span class="input-icon">👤</span>
+          <input type="text" [(ngModel)]="loginData.username" name="username" placeholder="Ingresa tu usuario" required autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Contraseña</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔒</span>
+          <input type="password" [(ngModel)]="loginData.password" name="password" placeholder="••••••••" required />
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Ingresar &rarr;</button>
+    </form>
+
+    <!-- Formulario REGISTRO -->
+    <form *ngIf="!esLogin" (ngSubmit)="onRegistro()">
+      <div class="input-group">
+        <label>Nombre Completo</label>
+        <div class="input-wrapper">
+          <span class="input-icon">👤</span>
+          <input type="text" [(ngModel)]="registroData.nombre" name="nombre" placeholder="Damián Padilla" required autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Nombre de Usuario</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🏷️</span>
+          <input type="text" [(ngModel)]="registroData.username" name="username" placeholder="dpadilla" required autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Correo Electrónico</label>
+        <div class="input-wrapper">
+          <span class="input-icon">✉️</span>
+          <input type="email" [(ngModel)]="registroData.email" name="email" placeholder="correo@ejemplo.com" required autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Contraseña</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔒</span>
+          <input type="password" [(ngModel)]="registroData.password" name="password" placeholder="••••••••" required />
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Registrarse &rarr;</button>
+    </form>
+
+    <div class="toggle-link">
+      <span *ngIf="esLogin">¿No tienes cuenta? <a (click)="toggleModo()">Regístrate aquí</a></span>
+      <span *ngIf="!esLogin">¿Ya tienes cuenta? <a (click)="toggleModo()">Inicia sesión</a></span>
+    </div>
+  </div>
+</div>

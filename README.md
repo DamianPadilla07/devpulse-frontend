@@ -1,59 +1,88 @@
-# TaskManagerFrontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.1.
+---
 
-## Development server
+### 📄 2. README para el Frontend (`task-manager-frontend`)
 
-To start a local development server, run:
+Crea un archivo llamado **`README.md`** dentro de la raíz de la carpeta `task-manager-frontend`:
 
-```bash
-ng serve
-```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+<h1 align="center"> ⚡ DevPulse AI - Frontend Client (Angular) </h1>
 
-## Code scaffolding
+<p align="center">
+  <img src="https://img.shields.io/badge/STATUS-EN%20PRODUCCION-green?style=for-the-badge" alt="Status">
+  <img src="https://img.shields.io/badge/Angular-18+-red?style=for-the-badge&logo=angular" alt="Angular">
+  <img src="https://img.shields.io/badge/TypeScript-5.x-blue?style=for-the-badge&logo=typescript" alt="TypeScript">
+  <img src="https://img.shields.io/badge/UI_Style-Dark_Theme-1e293b?style=for-the-badge" alt="Theme">
+</p>
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+> Cliente de aplicación web **SPA (Single Page Application)** desarrollado con **Angular y TypeScript**, ofreciendo una interfaz moderna tipo Dashboard de Ingeniería con analítica de riesgos y consumo de API REST.
 
-```bash
-ng generate component component-name
-```
+---
+🧑‍💻 Autor: Damián Padilla 
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 📌 Índice
+* [Descripción del Cliente](#-descripción-del-cliente)
+* [Características Visuales y UX](#-características-visuales-y-ux)
+* [Tecnologías Utilizadas](#-tecnologías-utilizadas)
+* [Seguridad y Rutas Protegidas](#-seguridad-y-rutas-protegidas)
+* [Instalación y Ejecución](#-instalación-y-ejecución)
+* [Estructura del Proyecto](#-estructura-del-proyecto)
+* [Autor](#-autor)
 
-```bash
-ng generate --help
-```
+---
 
-## Building
+## 📝 Descripción del Cliente
 
-To build the project run:
+**DevPulse AI Frontend** proporciona un panel de control interactivo donde los desarrolladores y líderes de equipo pueden gestionar el Backlog de un Sprint. Incorpora alertas visuales en tiempo real para la detección de **cuellos de botella** y comunicación asíncrona con el backend para solicitar asistencia diagnóstica a la IA.
 
-```bash
-ng build
-```
+---
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 🔨 Características Visuales y UX
 
-## Running unit tests
+- `📊 Dashboard de Métricas`: Tarjetas contadoras de tickets totales, pendientes, en progreso y completados.
+- `⚠️ Detección de Cuellos de Botella`: Borde animado y badge de alerta parpadeante en tickets de prioridad alta no resueltos.
+- `✨ Asistente IA Integrado`: Botón interactivo que renderiza diagnósticos de sprint generados por la IA.
+- `🛡️ Guardia de Rutas (AuthGuard)`: Interceptación de navegación no autorizada hacia el Dashboard.
+- `🎨 Diseño Dark Theme`: Interfaz estética optimizada para entornos de desarrollo de software.
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+---
 
-```bash
-ng test
-```
+## 🛠️ Tecnologías Utilizadas
 
-## Running end-to-end tests
+- **Framework:** Angular 18+ (Standalone Components)
+- **Lenguaje:** TypeScript
+- **Estilos:** CSS3 / Flexbox & CSS Grid (Animaciones personalizadas)
+- **Comunicación HTTP:** Angular `HttpClient` & `RxJS`
+- **Manejo de Reactividad:** `ChangeDetectorRef` / `NgZone`
 
-For end-to-end (e2e) testing, run:
+---
 
-```bash
-ng e2e
-```
+## 🔒 Seguridad y Rutas Protegidas
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+El archivo `auth-guard.ts` evalúa la persistencia del usuario en `localStorage` antes de permitir la navegación:
 
-## Additional Resources
+```typescript
+export const authGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+  if (authService.isLoggedIn()) {
+    return true; // Acceso permitido
+  } else {
+    router.navigate(['/login']); // Redirección automática
+    return false;
+  }
+};
+
+📁 Instalación y Ejecución
+Navegar a la carpeta del proyecto:
+cd task-manager-frontend
+
+Instalar dependencias de Node:
+npm install
+
+Iniciar el servidor de desarrollo:
+ng serve -o
+
+La aplicación se abrirá automáticamente en http://localhost:4200.
+
